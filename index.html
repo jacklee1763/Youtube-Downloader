@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 다운로더</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .format-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .format-btn {
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .format-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .format-btn:hover {
+            border-color: #667eea;
+        }
+
+        .video-info {
+            display: none;
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .video-info h3 {
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .video-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .error {
+            display: none;
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #c53030;
+        }
+
+        .notice {
+            background: #e6fffa;
+            color: #2d3748;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-left: 4px solid #38b2ac;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube 다운로더</h1>
+        
+        <div class="input-group">
+            <input type="url" id="videoUrl" placeholder="YouTube URL을 입력하세요...">
+        </div>
+
+        <div class="format-selection">
+            <div class="format-btn active" data-format="mp4">
+                📹 MP4 (비디오)
+            </div>
+            <div class="format-btn" data-format="mp3">
+                🎵 MP3 (오디오)
+            </div>
+        </div>
+
+        <div class="error" id="errorMessage"></div>
+        
+        <div class="video-info" id="videoInfo">
+            <h3 id="videoTitle"></h3>
+            <p id="videoDuration"></p>
+        </div>
+
+        <div class="loading" id="loading">
+            처리 중...
+        </div>
+
+        <button class="download-btn" id="downloadBtn">다운로드</button>
+
+        <div class="notice">
+            <strong>주의사항:</strong><br>
+            • 개인적인 용도로만 사용하세요<br>
+            • 저작권을 존중해주세요<br>
+            • 상업적 사용은 금지됩니다
+        </div>
+    </div>
+
+    <script>
+        let selectedFormat = 'mp4';
+
+        // 포맷 선택
+        document.querySelectorAll('.format-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedFormat = this.dataset.format;
+            });
+        });
+
+        // YouTube URL에서 비디오 ID 추출
+        function getVideoId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        // 비디오 정보 가져오기 (시뮬레이션)
+        async function getVideoInfo(videoId) {
+            // 실제로는 YouTube API를 사용해야 하지만, 여기서는 시뮬레이션
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        title: "샘플 비디오 제목",
+                        duration: "3:45"
+                    });
+                }, 1000);
+            });
+        }
+
+        // 다운로드 처리
+        async function handleDownload() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const errorDiv = document.getElementById('errorMessage');
+            const loadingDiv = document.getElementById('loading');
+            const videoInfoDiv = document.getElementById('videoInfo');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            // 에러 메시지 초기화
+            errorDiv.style.display = 'none';
+            videoInfoDiv.style.display = 'none';
+
+            if (!url) {
+                showError('YouTube URL을 입력해주세요.');
+                return;
+            }
+
+            const videoId = getVideoId(url);
+            if (!videoId) {
+                showError('올바른 YouTube URL을 입력해주세요.');
+                return;
+            }
+
+            // 로딩 시작
+            loadingDiv.style.display = 'block';
+            downloadBtn.disabled = true;
+
+            try {
+                // 비디오 정보 가져오기
+                const videoInfo = await getVideoInfo(videoId);
+                
+                // 비디오 정보 표시
+                document.getElementById('videoTitle').textContent = videoInfo.title;
+                document.getElementById('videoDuration').textContent = `재생시간: ${videoInfo.duration}`;
+                videoInfoDiv.style.display = 'block';
+
+                // 실제 다운로드는 서버사이드에서 처리되어야 함
+                // 여기서는 시뮬레이션으로 외부 서비스 링크를 제공
+                const downloadUrl = `https://yt-dlp-web.herokuapp.com/download?url=${encodeURIComponent(url)}&format=${selectedFormat}`;
+                
+                // 새 탭에서 다운로드 서비스 열기
+                window.open(downloadUrl, '_blank');
+                
+                showError('다운로드 서비스로 이동했습니다. 새 탭에서 다운로드를 진행하세요.', 'info');
+
+            } catch (error) {
+                showError('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+            } finally {
+                loadingDiv.style.display = 'none';
+                downloadBtn.disabled = false;
+            }
+        }
+
+        function showError(message, type = 'error') {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            if (type === 'info') {
+                errorDiv.style.background = '#bee3f8';
+                errorDiv.style.color = '#2b6cb0';
+                errorDiv.style.borderLeftColor = '#3182ce';
+            } else {
+                errorDiv.style.background = '#fed7d7';
+                errorDiv.style.color = '#c53030';
+                errorDiv.style.borderLeftColor = '#c53030';
+            }
+        }
+
+        // 이벤트 리스너
+        document.getElementById('downloadBtn').addEventListener('click', handleDownload);
+        
+        document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleDownload();
+            }
+        });
+
+        // URL 입력 시 자동으로 에러 메시지 숨기기
+        document.getElementById('videoUrl').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
