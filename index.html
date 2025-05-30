@@ -263,22 +263,31 @@
             downloadBtn.disabled = true;
 
             try {
-                // 비디오 정보 가져오기
-                const videoInfo = await getVideoInfo(videoId);
+                // 실제 작동하는 다운로드 서비스들
+                const services = {
+                    'y2mate': `https://www.y2mate.com/youtube/${videoId}`,
+                    'savefrom': `https://savefrom.net/#url=${encodeURIComponent(url)}`,
+                    'ytmp3': `https://ytmp3.cc/youtube-to-mp3/`,
+                    'loader': `https://loader.to/api/button/?url=${encodeURIComponent(url)}`
+                };
+
+                // 포맷에 따라 적절한 서비스 선택
+                let serviceUrl;
+                if (selectedFormat === 'mp3') {
+                    serviceUrl = services.ytmp3;
+                    showError('MP3 다운로드 사이트로 이동합니다. URL을 다시 붙여넣어 주세요.', 'info');
+                } else {
+                    serviceUrl = services.savefrom;
+                    showError('다운로드 사이트로 이동합니다. 자동으로 URL이 입력됩니다.', 'info');
+                }
                 
-                // 비디오 정보 표시
-                document.getElementById('videoTitle').textContent = videoInfo.title;
-                document.getElementById('videoDuration').textContent = `재생시간: ${videoInfo.duration}`;
+                // 비디오 정보 표시 (기본값)
+                document.getElementById('videoTitle').textContent = '다운로드 준비 완료';
+                document.getElementById('videoDuration').textContent = '외부 사이트에서 다운로드가 진행됩니다';
                 videoInfoDiv.style.display = 'block';
 
-                // 실제 다운로드는 서버사이드에서 처리되어야 함
-                // 여기서는 시뮬레이션으로 외부 서비스 링크를 제공
-                const downloadUrl = `https://yt-dlp-web.herokuapp.com/download?url=${encodeURIComponent(url)}&format=${selectedFormat}`;
-                
                 // 새 탭에서 다운로드 서비스 열기
-                window.open(downloadUrl, '_blank');
-                
-                showError('다운로드 서비스로 이동했습니다. 새 탭에서 다운로드를 진행하세요.', 'info');
+                window.open(serviceUrl, '_blank');
 
             } catch (error) {
                 showError('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
