@@ -1,7 +1,7 @@
 const pptxgen = require("pptxgenjs");
 const SK = "/root/.claude/skills/synced/e0a52d5c-e6e1-4af0-bc8e-93b3bfb5d588_b5287e50-13a9-4d8f-ae72-14d758d331d0/pptx";
 const { applyTheme } = require(SK + "/scripts/apply_theme.js");
-const FONT = "Malgun Gothic";
+const FONT = "Noto Sans KR";
 const NAVY = "0F172A", SLATE = "64748B", TEAL = "14B8A6", AMBER = "F59E0B", INK = "1E293B", TINT = "F1F5F9", LINE = "E2E8F0";
 const THEME = { name: "Claude Code 용어 지도", headFontFace: FONT, bodyFontFace: FONT,
   colors: { dk1: NAVY, lt1: "FFFFFF", dk2: INK, lt2: TINT, accent1: TEAL, accent2: AMBER, accent3: "6366F1",
