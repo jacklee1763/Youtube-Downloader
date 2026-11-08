@@ -24,7 +24,7 @@ pres.defineSlideMaster({ title: "LIGHT", background: { color: "FFFFFF" }, object
 const React = require("react"), ReactDOMServer = require("react-dom/server"), sharp = require("sharp");
 const fa = require("react-icons/fa");
 const ICON = {};
-const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud"];
+const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud","FaGithub","FaHistory","FaUsers","FaCloudUploadAlt"];
 async function loadIcons() {
   for (const n of ICON_NAMES) for (const c of ["FFFFFF", NAVY]) {
     const svg = ReactDOMServer.renderToStaticMarkup(React.createElement(fa[n], { color: "#" + c, size: 256 }));
@@ -122,6 +122,22 @@ function diagG3() {
   iconCard(s, 8.2, 2.75, 4.0, 1.65, "FaBoxOpen", NAVY, "사물함", "저장 기록을 인터넷에 보관", LINE);
   iconCard(s, 8.2, 4.7, 4.0, 1.65, "FaFileSignature", AMBER, "④ PR", "본판에 합쳐 달라는 신청서", AMBER);
 }
+function diagWhy() {
+  const s = diagram("3 / 4  저장과 보관 · 왜 쓸까요?", "GitHub를 쓰는 이유는 네 가지입니다",
+    "핵심은 '보관이 목적, 공유는 선택'입니다. ①백업: 작업 컴퓨터는 세션이 끝나면 사라질 수 있어서, 올려 둔 파일만 남습니다. ②기록: 언제 무엇을 바꿨는지 남아 실수해도 이전으로 돌아갑니다. ③협업: 여러 사람이 같은 파일을 함께 고치고 검토할 수 있습니다. 저장소를 공개할지 비공개로 둘지는 설정으로 정하므로, 올린다고 곧바로 남에게 보이는 것은 아닙니다(비공개 여부는 직접 확인하게 안내). ④Claude Code 연동: Claude가 만든 결과를 올려 두면 내 기기에서도 이어서 확인할 수 있습니다.");
+  s.addShape(pres.ShapeType.roundRect, { x: 0.8, y: 2.0, w: 3.3, h: 4.4, rectRadius: 0.18, fill: { color: NAVY }, line: { type: "none" }, objectName: "GitHub 중심 카드" });
+  disc(s, "FaGithub", 2.45, 3.35, 1.4, "FFFFFF", NAVY, "GitHub");
+  s.addText([{ text: "GitHub", options: { bold: true, fontSize: 24, color: "FFFFFF", align: "center", breakLine: true } },
+             { text: "인터넷 사물함", options: { fontSize: 18, color: "CBD5E1", align: "center", breakLine: true } },
+             { text: "보관이 목적, 공유는 선택", options: { fontSize: 16, color: AMBER, align: "center", bold: true } }],
+    { x: 1.0, y: 4.35, w: 2.9, h: 1.8, fontFace: FONT, valign: "top", margin: 0, isTextBox: true, objectName: "GitHub 중심 글" });
+  arrR(s, 4.15, 3.95, 0.3, 0.4);
+  const why = [["FaCloudUploadAlt", TEAL, "① 백업", "내 컴퓨터가 사라져도 파일이 남습니다"],
+               ["FaHistory", AMBER, "② 기록과 되돌리기", "언제 뭘 바꿨는지 남고 되돌릴 수 있습니다"],
+               ["FaUsers", TEAL, "③ 협업", "여러 사람이 함께 고치고 검토합니다"],
+               ["FaRobot", AMBER, "④ Claude 연동", "Claude가 올린 결과를 내 기기에서 확인합니다"]];
+  why.forEach((w, i) => iconCard(s, 4.55 + (i % 2) * 4.0, 2.0 + Math.floor(i / 2) * 2.3, 3.9, 2.1, w[0], w[1], w[2], w[3], LINE));
+}
 function diagG4() {
   const s = diagram("4 / 4  Claude Code 사용법 · 도해", "내가 요청하고, 승인으로 통제합니다",
     "왼쪽 '나'가 프롬프트(요청 글)를 보내면 가운데 세션(작업 시간)에서 Claude가 일합니다. 스킬은 Claude 옆에 꽂아 둔 작업 설명서입니다. 두 화살표 위의 방패(권한 승인)와 목록(허용 목록)이 안전장치입니다. 내가 승인해야 Claude가 손대고, 허용된 주소로만 바깥에 나갑니다. 오른쪽은 커넥터/플러그인으로 연결한 구글 드라이브, 노션 같은 외부 도구입니다.");
@@ -218,6 +234,7 @@ tableSlide("3 / 4  저장과 보관", "저장과 보관: 저장 도장을 찍고
   "게임 저장에 비유하세요. Git은 저장 파일 시스템, GitHub는 클라우드 저장소. 수강생이 가장 헷갈리는 구간이라 다음 장에서 흐름을 그림으로 다시 보여 줍니다.");
 
 diagG3();
+diagWhy();
 
 tableSlide("4 / 4  Claude Code 사용법", "Claude Code 사용법: 승인 버튼으로 내가 통제합니다", [
   ["세션", "Claude와 한 번 이어서 일하는 작업 시간"],
