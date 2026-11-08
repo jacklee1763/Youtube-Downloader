@@ -24,7 +24,7 @@ pres.defineSlideMaster({ title: "LIGHT", background: { color: "FFFFFF" }, object
 const React = require("react"), ReactDOMServer = require("react-dom/server"), sharp = require("sharp");
 const fa = require("react-icons/fa");
 const ICON = {};
-const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud","FaGithub","FaHistory","FaUsers","FaCloudUploadAlt"];
+const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud","FaGithub","FaHistory","FaUsers","FaCloudUploadAlt","FaLink","FaTrashAlt"];
 async function loadIcons() {
   for (const n of ICON_NAMES) for (const c of ["FFFFFF", NAVY]) {
     const svg = ReactDOMServer.renderToStaticMarkup(React.createElement(fa[n], { color: "#" + c, size: 256 }));
@@ -138,6 +138,41 @@ function diagWhy() {
                ["FaRobot", AMBER, "④ Claude 연동", "Claude가 올린 결과를 내 기기에서 확인합니다"]];
   why.forEach((w, i) => iconCard(s, 4.55 + (i % 2) * 4.0, 2.0 + Math.floor(i / 2) * 2.3, 3.9, 2.1, w[0], w[1], w[2], w[3], LINE));
 }
+function diagBranch() {
+  const s = diagram("3 / 4  저장과 보관 · 브랜치", "브랜치는 원본을 지키는 복사본 줄기입니다",
+    "비개발자에게는 '책 원본과 복사본' 비유가 가장 잘 통합니다. 위쪽 줄이 원본(main)입니다. 원본을 고치다 망치면 큰일이니, 복사본 줄기(브랜치)를 따로 떼어 거기서 마음껏 시험합니다. 결과가 좋으면 원본에 합치고(PR), 마음에 안 들면 복사본만 버리면 끝입니다. 오늘 만든 영상과 슬라이드도 원본(main)을 건드리지 않으려고 별도 브랜치에 올렸습니다.");
+  s.addText("원본 (main)", { x: 0.8, y: 2.0, w: 3.0, h: 0.4, fontFace: FONT, fontSize: 18, bold: true, color: NAVY, margin: 0, valign: "middle", isTextBox: true, objectName: "원본 이름" });
+  s.addShape(pres.ShapeType.line, { x: 1.3, y: 2.85, w: 10.9, h: 0, line: { color: SLATE, width: 3 }, objectName: "원본 줄기" });
+  [1.7, 3.1, 4.5].forEach((cx, i) => disc(s, "FaStamp", cx, 2.85, 0.6, NAVY, "FFFFFF", "원본 저장 " + (i + 1)));
+  disc(s, "FaCheckCircle", 10.2, 2.85, 0.7, GREEN, "FFFFFF", "합쳐진 결과");
+  lbl(s, "합쳐진 원본", 9.2, 2.2, 2.0, "15803D", 16);
+  s.addShape(pres.ShapeType.line, { x: 4.5, y: 3.2, w: 0, h: 1.2, line: { color: SLATE, width: 3 }, objectName: "갈라지는 선" });
+  s.addShape(pres.ShapeType.line, { x: 4.5, y: 4.4, w: 4.1, h: 0, line: { color: SLATE, width: 3, dashType: "dash" }, objectName: "브랜치 줄기" });
+  [5.5, 6.7, 7.9].forEach((cx, i) => disc(s, "FaStamp", cx, 4.4, 0.6, TEAL, "FFFFFF", "브랜치 저장 " + (i + 1)));
+  s.addText([{ text: "복사본 줄기 (브랜치)", options: { bold: true, fontSize: 16, color: NAVY, breakLine: true } }, { text: "여기서 마음껏 시험해 봅니다", options: { fontSize: 15, color: INK } }],
+    { x: 4.8, y: 4.75, w: 4.2, h: 0.8, fontFace: FONT, valign: "top", margin: 0, isTextBox: true, objectName: "브랜치 설명" });
+  s.addShape(pres.ShapeType.line, { x: 8.6, y: 4.4, w: 1.6, h: 0, line: { color: GREEN, width: 3 }, objectName: "합치는 선 가로" });
+  s.addShape(pres.ShapeType.line, { x: 10.2, y: 3.25, w: 0, h: 1.15, line: { color: GREEN, width: 3 }, objectName: "합치는 선 세로" });
+  lbl(s, "합칩니다 (PR)", 10.35, 3.65, 2.0, "15803D", 16, "left");
+  iconCard(s, 0.8, 5.75, 5.8, 1.0, "FaCheckCircle", GREEN, "잘 되면", "원본에 합칩니다 (PR)", GREEN, 0.6);
+  iconCard(s, 6.9, 5.75, 5.6, 1.0, "FaTrashAlt", "EF4444", "마음에 안 들면", "복사본만 버립니다. 원본은 그대로", "EF4444", 0.6);
+}
+function diagBranchWhy() {
+  const s = diagram("3 / 4  저장과 보관 · 브랜치", "폴더는 정리용, 브랜치는 시험용입니다",
+    "폴더와 브랜치를 가장 많이 헷갈립니다. 폴더는 '파일을 어디에 둘지' 정하는 서랍 구조이고, 브랜치는 같은 프로젝트를 다른 버전으로 나란히 진행하는 평행 복사본입니다. 코딩은 파일들이 서로 얽혀 있어서 하나를 고치면 다른 곳이 고장 날 수 있습니다. 그래서 원본은 두고 복사본에서 먼저 시험하는 방식이 더 편하고 안전합니다. 여러 사람이 동시에 일할 때도 각자 줄기에서 작업한 뒤 합칩니다.");
+  zone(s, 0.8, 1.9, 5.7, 2.3, "폴더 = 서랍 (정리)");
+  disc(s, "FaFolder", 1.75, 3.2, 0.9, TEAL, "FFFFFF", "폴더");
+  s.addText([{ text: "파일을 어디에 둘지", options: { bold: true, fontSize: 18, color: NAVY, breakLine: true } }, { text: "상위, 하위로 나뉘는 위아래 구조", options: { fontSize: 15, color: INK } }],
+    { x: 2.45, y: 2.7, w: 3.9, h: 1.0, fontFace: FONT, valign: "middle", margin: 0, isTextBox: true, objectName: "폴더 설명" });
+  zone(s, 6.8, 1.9, 5.7, 2.3, "브랜치 = 평행 복사본 (시험)");
+  disc(s, "FaCodeBranch", 7.75, 3.2, 0.9, AMBER, "FFFFFF", "브랜치");
+  s.addText([{ text: "같은 프로젝트의 다른 버전", options: { bold: true, fontSize: 18, color: NAVY, breakLine: true } }, { text: "나란히 진행하다가 나중에 합칩니다", options: { fontSize: 15, color: INK } }],
+    { x: 8.45, y: 2.7, w: 3.9, h: 1.0, fontFace: FONT, valign: "middle", margin: 0, isTextBox: true, objectName: "브랜치 설명" });
+  lbl(s, "코딩에서 브랜치가 편한 이유", 0.8, 4.4, 8.0, NAVY, 20, "left");
+  const r = [["FaLink", TEAL, "얽혀 있는 파일", "하나 고치면 다른 게 고장 날 수 있음"], ["FaShieldAlt", AMBER, "실수해도 안전", "원본은 그대로 남습니다"],
+             ["FaCheckCircle", TEAL, "잘 되면 합침", "시험한 결과만 원본에 반영"], ["FaUsers", AMBER, "동시에 작업", "여러 사람이 각자 줄기에서 진행"]];
+  r.forEach((x, i) => stackCard(s, 0.8 + i * 3.0, 4.9, 2.8, 1.95, x[0], x[1], x[2], x[3], LINE));
+}
 function diagG4() {
   const s = diagram("4 / 4  Claude Code 사용법 · 도해", "내가 요청하고, 승인으로 통제합니다",
     "왼쪽 '나'가 프롬프트(요청 글)를 보내면 가운데 세션(작업 시간)에서 Claude가 일합니다. 스킬은 Claude 옆에 꽂아 둔 작업 설명서입니다. 두 화살표 위의 방패(권한 승인)와 목록(허용 목록)이 안전장치입니다. 내가 승인해야 Claude가 손대고, 허용된 주소로만 바깥에 나갑니다. 오른쪽은 커넥터/플러그인으로 연결한 구글 드라이브, 노션 같은 외부 도구입니다.");
@@ -235,6 +270,8 @@ tableSlide("3 / 4  저장과 보관", "저장과 보관: 저장 도장을 찍고
 
 diagG3();
 diagWhy();
+diagBranch();
+diagBranchWhy();
 
 tableSlide("4 / 4  Claude Code 사용법", "Claude Code 사용법: 승인 버튼으로 내가 통제합니다", [
   ["세션", "Claude와 한 번 이어서 일하는 작업 시간"],
