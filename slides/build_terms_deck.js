@@ -24,7 +24,7 @@ pres.defineSlideMaster({ title: "LIGHT", background: { color: "FFFFFF" }, object
 const React = require("react"), ReactDOMServer = require("react-dom/server"), sharp = require("sharp");
 const fa = require("react-icons/fa");
 const ICON = {};
-const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud","FaGithub","FaHistory","FaUsers","FaCloudUploadAlt","FaLink","FaTrashAlt"];
+const ICON_NAMES = ["FaFolder","FaFileCode","FaTerminal","FaCog","FaExclamationTriangle","FaCheckCircle","FaPuzzlePiece","FaKey","FaServer","FaConciergeBell","FaPen","FaStamp","FaCodeBranch","FaBoxOpen","FaFileSignature","FaUser","FaCommentDots","FaShieldAlt","FaRobot","FaBook","FaPlug","FaGoogleDrive","FaStickyNote","FaListUl","FaCloud","FaGithub","FaHistory","FaUsers","FaCloudUploadAlt","FaLink","FaTrashAlt","FaSearch"];
 async function loadIcons() {
   for (const n of ICON_NAMES) for (const c of ["FFFFFF", NAVY]) {
     const svg = ReactDOMServer.renderToStaticMarkup(React.createElement(fa[n], { color: "#" + c, size: 256 }));
@@ -173,6 +173,37 @@ function diagBranchWhy() {
              ["FaCheckCircle", TEAL, "잘 되면 합침", "시험한 결과만 원본에 반영"], ["FaUsers", AMBER, "동시에 작업", "여러 사람이 각자 줄기에서 진행"]];
   r.forEach((x, i) => stackCard(s, 0.8 + i * 3.0, 4.9, 2.8, 1.95, x[0], x[1], x[2], x[3], LINE));
 }
+function arrD(s, x, y) { s.addShape(pres.ShapeType.downArrow, { x, y, w: 0.3, h: 0.25, fill: { color: SLATE }, line: { type: "none" }, objectName: "아래 화살표" }); }
+function diagAgent1() {
+  const s = light("시작", "개념 · 챗봇과 에이전트", "챗봇은 답을 주고, 에이전트는 일을 합니다",
+    "GPT 같은 챗봇은 '말로 답'을 줍니다. 답을 받아 복사하고 붙여 넣고 실행하는 것은 사람 몫입니다. 에이전트(Claude Code, Codex 등)는 목표만 주면 파일을 만들고, 명령을 실행하고, 결과를 확인하는 것까지 직접 합니다. 사람은 중간에 승인만 합니다. 비유: 챗봇은 조언해 주는 컨설턴트, 에이전트는 내 책상에서 일해 주는 조수입니다. 오늘 '원고를 영상으로 만들어 줘' 한 줄 요청이 영상 파일까지 나온 것이 에이전트의 사례입니다. (Codex 등 다른 도구의 최신 기능 차이는 공식 자료로 확인 필요)");
+  zone(s, 0.8, 1.9, 5.7, 4.75, "챗봇 (GPT 같은 대화형) = 컨설턴트");
+  iconCard(s, 1.05, 2.5, 5.2, 1.15, "FaUser", TEAL, "내가 질문한다", "무엇을 원하는지 말합니다", LINE, 0.7);
+  arrD(s, 3.5, 3.7);
+  iconCard(s, 1.05, 4.0, 5.2, 1.15, "FaCommentDots", AMBER, "챗봇이 글로 답한다", "조언, 초안, 설명", LINE, 0.7);
+  arrD(s, 3.5, 5.2);
+  iconCard(s, 1.05, 5.5, 5.2, 1.0, "FaPen", SLATE, "내가 직접 실행한다", "복사, 붙여넣기, 확인은 사람 몫", LINE, 0.7);
+  zone(s, 6.8, 1.9, 5.7, 4.75, "에이전트 (Claude Code, Codex) = 조수", "0F766E");
+  iconCard(s, 7.05, 2.5, 5.2, 1.15, "FaUser", TEAL, "내가 목표를 준다", "예: 이 원고를 영상으로 만들어 줘", "0F766E", 0.7);
+  arrD(s, 9.5, 3.7);
+  iconCard(s, 7.05, 4.0, 5.2, 1.15, "FaRobot", NAVY, "에이전트가 직접 일한다", "파일 만들기, 명령 실행, 결과 확인", "0F766E", 0.7);
+  arrD(s, 9.5, 5.2);
+  iconCard(s, 7.05, 5.5, 5.2, 1.0, "FaCheckCircle", GREEN, "완성된 결과물을 받는다", "중간에는 승인만 합니다", "0F766E", 0.7);
+}
+function diagAgent2() {
+  const s = light("시작", "개념 · 에이전트가 일하는 방식", "에이전트는 6단계를 스스로 반복합니다",
+    "에이전트의 핵심은 '실행하고 확인하고 고치는' 반복입니다. 사람은 처음에 목표를 주고(①), 마지막에 결과를 확인합니다(⑥). 가운데 ②~⑤는 에이전트가 스스로 돌립니다. 오늘 영상 제작이 이 순서였습니다: 원고를 받고(①), 코드를 짜서(②③) 화면을 만들고, 이미지를 눈으로 확인해서(④) 글자 겹침을 찾아 고친 뒤(⑤) 결과 파일을 전달했습니다(⑥). 중간에 막히면 사람에게 승인이나 도움을 요청합니다(예: GitHub 권한).");
+  zone(s, 2.68, 2.0, 7.94, 3.6, "에이전트가 스스로 반복");
+  const st = [["FaUser", AMBER, "① 지시", "목표를 말합니다"], ["FaListUl", NAVY, "② 계획", "할 일을 순서대로 나눕니다"], ["FaCog", NAVY, "③ 실행", "파일을 만들고 명령을 돌립니다"],
+              ["FaSearch", NAVY, "④ 확인", "결과를 직접 점검합니다"], ["FaPen", NAVY, "⑤ 수정", "문제를 찾아 고칩니다"], ["FaCheckCircle", GREEN, "⑥ 보고", "결과를 알려 주고 승인을 받습니다"]];
+  st.forEach((x, i) => {
+    stackCard(s, 0.8 + i * 2.0, 2.75, 1.7, 2.6, x[0], x[1], x[2], x[3], i === 0 || i === 5 ? AMBER : LINE);
+    if (i < 5) arrR(s, 2.53 + i * 2.0, 3.85, 0.26, 0.36);
+  });
+  lbl(s, "사람", 0.8, 5.65, 1.7, "B45309", 16);
+  lbl(s, "사람", 10.8, 5.65, 1.7, "B45309", 16);
+  note(s, "오늘 영상 만들기도 이 순서였습니다: 원고(①) → 코드 작성(②③) → 화면 확인(④) → 글자 겹침 수정(⑤) → 결과 전달(⑥)", 0.8, 6.1, 11.7);
+}
 function diagG4() {
   const s = diagram("4 / 4  Claude Code 사용법 · 도해", "내가 요청하고, 승인으로 통제합니다",
     "왼쪽 '나'가 프롬프트(요청 글)를 보내면 가운데 세션(작업 시간)에서 Claude가 일합니다. 스킬은 Claude 옆에 꽂아 둔 작업 설명서입니다. 두 화살표 위의 방패(권한 승인)와 목록(허용 목록)이 안전장치입니다. 내가 승인해야 Claude가 손대고, 허용된 주소로만 바깥에 나갑니다. 오른쪽은 커넥터/플러그인으로 연결한 구글 드라이브, 노션 같은 외부 도구입니다.");
@@ -209,6 +240,8 @@ let s = pres.addSlide({ masterName: "DARK", sectionTitle: "시작" });
 s.addText("코딩을 몰라도 시작하는\nClaude Code 용어", { x: 0.8, y: 2.3, w: 11.7, h: 1.8, fontFace: FONT, fontSize: 48, bold: true, color: "FFFFFF", valign: "middle", margin: 0, isTextBox: true, objectName: "제목" });
 s.addText("초등학생도 이해하는 4묶음 용어 지도", { x: 0.8, y: 4.3, w: 11.7, h: 0.9, fontFace: FONT, fontSize: 22, color: "CBD5E1", valign: "top", margin: 0, isTextBox: true, objectName: "부제" });
 s.addNotes("오늘의 목표: 코딩을 전혀 몰라도 Claude Code 화면에서 만나는 말을 겁내지 않게 만드는 것. 총 27개 용어를 4묶음으로 나눠 비유로 설명합니다. 외우기보다 '이런 말이 있구나' 하고 지나가도 괜찮다고 먼저 안심시켜 주세요.");
+diagAgent1();
+diagAgent2();
 
 // 2. 한눈에 보기
 s = light("시작", "한눈에 보기", "용어는 4묶음이면 충분합니다",
